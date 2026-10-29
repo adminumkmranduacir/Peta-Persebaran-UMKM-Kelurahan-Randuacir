@@ -8,6 +8,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/L.Control.Locate.min.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
@@ -27,7 +28,9 @@
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/L.Control.Locate.min.js"></script>
         <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
         <script src="js/leaflet-hash.js"></script>
@@ -38,11 +41,12 @@
         <script src="js/leaflet.photon.js"></script>
         <script src="data/BatasWilayahRWkelurahanRanduacir_2.js"></script>
         <script src="data/JaringanJalan_3.js"></script>
-        <script src="data/UMKMRanduacir_4.js"></script>
+        <script src="data/KantorPemerintahan_4.js"></script>
+        <script src="data/UMKMRanduacir_5.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-7.385437732359608,110.4915444740211],[-7.359658153586779,110.53933956991584]]);
+        }).fitBounds([[-7.368652917116885,110.48978062575553],[-7.342873254947324,110.5375739497665]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/qgis2web/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -152,6 +156,7 @@
         var zoomControl = L.control.zoom({
             position: 'topleft'
         }).addTo(map);
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
         }
@@ -296,7 +301,7 @@
                     return {
                 pane: 'pane_BatasWilayahRWkelurahanRanduacir_2',
                 opacity: 1,
-                color: 'rgba(187,0,255,1.0)',
+                color: 'rgba(187,0,255,0.5019607843137255)',
                 dashArray: '4.0,2.0,1.0,2.0,1.0,2.0',
                 lineCap: 'square',
                 lineJoin: 'bevel',
@@ -451,7 +456,7 @@
                 weight: 3.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(187,0,255,1.0)',
+                fillColor: 'rgba(187,0,255,0.5019607843137255)',
                 interactive: true,
             }
                     break;
@@ -583,7 +588,57 @@
         });
         bounds_group.addLayer(layer_JaringanJalan_3);
         map.addLayer(layer_JaringanJalan_3);
-        function pop_UMKMRanduacir_4(feature, layer) {
+        function pop_KantorPemerintahan_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Kantor Pemerintahan</th>\
+                        <td>' + (feature.properties['Nama'] !== null ? autolinker.link(String(feature.properties['Nama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_KantorPemerintahan_4_0() {
+            return {
+                pane: 'pane_KantorPemerintahan_4',
+                radius: 6.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,254,0,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_KantorPemerintahan_4');
+        map.getPane('pane_KantorPemerintahan_4').style.zIndex = 404;
+        map.getPane('pane_KantorPemerintahan_4').style['mix-blend-mode'] = 'normal';
+        var layer_KantorPemerintahan_4 = new L.geoJson(json_KantorPemerintahan_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KantorPemerintahan_4',
+            layerName: 'layer_KantorPemerintahan_4',
+            pane: 'pane_KantorPemerintahan_4',
+            onEachFeature: pop_KantorPemerintahan_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_KantorPemerintahan_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_KantorPemerintahan_4);
+        map.addLayer(layer_KantorPemerintahan_4);
+        function pop_UMKMRanduacir_5(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">Nama Usaha</th>\
@@ -597,9 +652,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_UMKMRanduacir_4_0() {
+        function style_UMKMRanduacir_5_0() {
             return {
-                pane: 'pane_UMKMRanduacir_4',
+                pane: 'pane_UMKMRanduacir_5',
                 radius: 3.2,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -613,28 +668,29 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_UMKMRanduacir_4');
-        map.getPane('pane_UMKMRanduacir_4').style.zIndex = 404;
-        map.getPane('pane_UMKMRanduacir_4').style['mix-blend-mode'] = 'normal';
-        var layer_UMKMRanduacir_4 = new L.geoJson(json_UMKMRanduacir_4, {
+        map.createPane('pane_UMKMRanduacir_5');
+        map.getPane('pane_UMKMRanduacir_5').style.zIndex = 405;
+        map.getPane('pane_UMKMRanduacir_5').style['mix-blend-mode'] = 'normal';
+        var layer_UMKMRanduacir_5 = new L.geoJson(json_UMKMRanduacir_5, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_UMKMRanduacir_4',
-            layerName: 'layer_UMKMRanduacir_4',
-            pane: 'pane_UMKMRanduacir_4',
-            onEachFeature: pop_UMKMRanduacir_4,
+            dataVar: 'json_UMKMRanduacir_5',
+            layerName: 'layer_UMKMRanduacir_5',
+            pane: 'pane_UMKMRanduacir_5',
+            onEachFeature: pop_UMKMRanduacir_5,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_UMKMRanduacir_4_0(feature));
+                return L.circleMarker(latlng, style_UMKMRanduacir_5_0(feature));
             },
         });
-        bounds_group.addLayer(layer_UMKMRanduacir_4);
-        map.addLayer(layer_UMKMRanduacir_4);
+        bounds_group.addLayer(layer_UMKMRanduacir_5);
+        map.addLayer(layer_UMKMRanduacir_5);
         var overlaysTree = [
-            {label: '<img src="legend/UMKMRanduacir_4.png" /> UMKM Randuacir', layer: layer_UMKMRanduacir_4},
+            {label: '<img src="legend/UMKMRanduacir_5.png" /> UMKM Randuacir', layer: layer_UMKMRanduacir_5},
+            {label: '<img src="legend/KantorPemerintahan_4.png" /> Kantor Pemerintahan', layer: layer_KantorPemerintahan_4},
             {label: '<img src="legend/JaringanJalan_3.png" /> Jaringan Jalan', layer: layer_JaringanJalan_3},
             {label: 'Batas Wilayah RW kelurahan Randuacir<br /><table><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_10.png" /></td><td>1</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_21.png" /></td><td>2</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_32.png" /></td><td>3</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_43.png" /></td><td>4</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_54.png" /></td><td>5</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_65.png" /></td><td>6</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_76.png" /></td><td>7</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_87.png" /></td><td>8</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_98.png" /></td><td>9</td></tr><tr><td style="text-align: center;"><img src="legend/BatasWilayahRWkelurahanRanduacir_2_109.png" /></td><td>10</td></tr></table>', layer: layer_BatasWilayahRWkelurahanRanduacir_2},
             {label: "ESRI Standard", layer: layer_ESRIStandard_1},
@@ -651,27 +707,40 @@
         lay.addTo(map);
         setBounds();
         var i = 0;
-        layer_UMKMRanduacir_4.eachLayer(function(layer) {
+        layer_KantorPemerintahan_4.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['Nama'] !== null?String('<div style="color: #000000; font-size: 5pt; font-family: \'Segoe UI Black\', sans-serif;">' + layer.feature.properties['Nama']).replace(/\\n/g, '<br>') + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UMKMRanduacir_4'});
+            layer.bindTooltip((layer.feature.properties['Nama'] !== null?String('<div style="color: #000000; font-size: 5pt; font-family: \'Segoe UI Black\', sans-serif;">' + layer.feature.properties['Nama']).replace(/\\n/g, '<br>') + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_KantorPemerintahan_4'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_UMKMRanduacir_4]);
+        var i = 0;
+        layer_UMKMRanduacir_5.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Nama'] !== null?String('<div style="color: #000000; font-size: 5pt; font-weight: bold; font-family: \'Segoe UI Black\', sans-serif;">' + layer.feature.properties['Nama']).replace(/\\n/g, '<br>') + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UMKMRanduacir_5'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_KantorPemerintahan_4,layer_UMKMRanduacir_5]);
         map.on("zoomend", function(){
-            resetLabels([layer_UMKMRanduacir_4]);
+            resetLabels([layer_KantorPemerintahan_4,layer_UMKMRanduacir_5]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_UMKMRanduacir_4]);
+            resetLabels([layer_KantorPemerintahan_4,layer_UMKMRanduacir_5]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_UMKMRanduacir_4]);
+            resetLabels([layer_KantorPemerintahan_4,layer_UMKMRanduacir_5]);
         });
         </script>        
     </body>
